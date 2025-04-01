@@ -1,0 +1,31 @@
+// ./worker/build.gradle
+plugins {
+    id 'java'
+    id 'application'
+}
+
+mainClassName = 'worker.Worker'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'redis.clients:jedis:3.7.0'
+    implementation 'org.postgresql:postgresql:42.3.1'
+    implementation 'org.json:json:20211205'
+}
+
+jar {
+    archiveBaseName = 'worker'
+    archiveVersion =  '1.0.0'
+    manifest {
+        attributes 'Main-Class': 'worker.Worker'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}

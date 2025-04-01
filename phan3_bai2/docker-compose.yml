@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo:4.4  # Dùng phiên bản cụ thể để đảm bảo có mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - app_network
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5    # Tăng số lần thử
+      start_period: 40s  # Tăng thời gian khởi động
+
+  nodeapp:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - app_network
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/nodeapp
+
+networks:
+  app_network:
+    driver: bridge
+
+volumes:
+  mongo_data:

@@ -1,0 +1,89 @@
+<!-- ./result/public/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Voting Results</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: #333;
+    }
+    .results {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 30px;
+    }
+    .option {
+      width: 300px;
+      padding: 20px;
+      border-radius: 5px;
+    }
+    #a {
+      background-color: #4CAF50;
+      color: white;
+    }
+    #b {
+      background-color: #008CBA;
+      color: white;
+    }
+    .percentage {
+      font-size: 48px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    .votes {
+      font-size: 18px;
+    }
+  </style>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Voting Results</h1>
+    
+    <div class="results">
+      <div id="a" class="option">
+        <h2>Cats</h2>
+        <div class="percentage" id="a-percentage">0%</div>
+        <div class="votes" id="a-votes">0 votes</div>
+      </div>
+      <div id="b" class="option">
+        <h2>Dogs</h2>
+        <div class="percentage" id="b-percentage">0%</div>
+        <div class="votes" id="b-votes">0 votes</div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const socket = io();
+    
+    socket.on('results', (data) => {
+      const totalVotes = data.a + data.b;
+      
+      // Update counts
+      document.getElementById('a-votes').innerText = data.a + ' votes';
+      document.getElementById('b-votes').innerText = data.b + ' votes';
+      
+      // Update percentages
+      const aPercentage = totalVotes > 0 ? Math.round((data.a / totalVotes) * 100) : 0;
+      const bPercentage = totalVotes > 0 ? Math.round((data.b / totalVotes) * 100) : 0;
+      
+      document.getElementById('a-percentage').innerText = aPercentage + '%';
+      document.getElementById('b-percentage').innerText = bPercentage + '%';
+    });
+  </script>
+</body>
+</html>

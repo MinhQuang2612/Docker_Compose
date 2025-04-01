@@ -1,0 +1,4 @@
+# ./vote/requirements.txt
+flask
+redis
+gunicorn

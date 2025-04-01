@@ -1,0 +1,28 @@
+services:
+  flask1:
+    build: ./app
+    environment:
+      - HOSTNAME=Flask-Instance-1
+    networks:
+      - app_network
+
+  flask2:
+    build: ./app
+    environment:
+      - HOSTNAME=Flask-Instance-2
+    networks:
+      - app_network
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "8080:8080"
+    depends_on:
+      - flask1
+      - flask2
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
